@@ -112,7 +112,9 @@ boolean MicroOLED::i2cWriteMultiple(uint8_t address, uint8_t *dataBytes, size_t 
   // I2C: split the data up into packets of i2cTransactionSize
   size_t bytesLeftToWrite = numDataBytes;
   size_t bytesWrittenTotal = 0;
-
+    _i2cPort->beginTransmission(address);
+    
+		_i2cPort->write(I2C_DATA);
   while (bytesLeftToWrite > 0)
   {
     size_t bytesToWrite; // Limit bytesToWrite to i2cTransactionSize
@@ -121,26 +123,26 @@ boolean MicroOLED::i2cWriteMultiple(uint8_t address, uint8_t *dataBytes, size_t 
     else
       bytesToWrite = bytesLeftToWrite;
 
-    _i2cPort->beginTransmission(address);
-		_i2cPort->write(I2C_DATA);
+
     size_t bytesWritten = _i2cPort->write(dataBytes, bytesToWrite); // Write the bytes
 
     bytesWrittenTotal += bytesWritten; // Update the totals
     bytesLeftToWrite -= bytesToWrite;
     dataBytes += bytesToWrite; // Point to fresh data
 
-    if (bytesLeftToWrite > 0)
-    {
-      if (_i2cPort->endTransmission(false) != 0) //Send a restart command. Do not release bus.
-        return (false);                          //Sensor did not ACK
-    }
-    else
-    {
-      if (_i2cPort->endTransmission() != 0) //We're done. Release bus.
-        return (false);                     //Sensor did not ACK
-    }
+    // if (bytesLeftToWrite > 0)
+    // {
+    //   if (_i2cPort->endTransmission(false) != 0) //Send a restart command. Do not release bus.
+    //     return (false);                          //Sensor did not ACK
+    // }
+    // else
+    // {
+    //   if (_i2cPort->endTransmission() != 0) //We're done. Release bus.
+    //     return (false);                     //Sensor did not ACK
+    // }
   }
-
+      if (_i2cPort->endTransmission() != 0) //We're done. Release bus.
+        return (false);     
   return (bytesWrittenTotal == numDataBytes);
 }
 

@@ -41,7 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #else
 	#include <pgmspace.h>
 #endif
-#include <SFE_MicroOLED.h>
+#include <MicroOLED.h>
 
 #ifndef _BV
 #define _BV(x) (1 << x)
